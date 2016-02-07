@@ -6,7 +6,7 @@
    * [Постановка задачи](postanovka_zadachi.md)
    * [Используемые инструменты](ispolzuemie_instrumenti.md)
 * [Необходимая теория](neobhodimaya_teoriya.md)
-   * Примитивная реализация
+   * [Примитивная реализация](primitivnaya_realizatsiya.md)
    * Простые парсеры
    * Сложные парсеры
    * Первый запуск
