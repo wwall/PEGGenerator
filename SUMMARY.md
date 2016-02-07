@@ -5,7 +5,7 @@
    * [Благодарности](blagodarnosti.md)
    * [Постановка задачи](postanovka_zadachi.md)
    * [Используемые инструменты](ispolzuemie_instrumenti.md)
-* Необходимая теория
+* [Необходимая теория](neobhodimaya_teoriya.md)
    * Простые парсеры
    * Сложные парсеры
    * Первый запуск
