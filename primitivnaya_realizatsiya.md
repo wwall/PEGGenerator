@@ -97,8 +97,83 @@ endfunction
 
 Как становится видно - наши функции начинают вырабатывать собственный интерфейс - возвращать неопределено в случае ошибки, или прочитанное значение. Так же потихньку выресовывается и шаблон по которому пишутся функции.Оно но омрачает - пока функции readPlus и readDigit все же сильно разлчаются - все дело в проверке. Но если немного подумать, но исходную грамматику можно переписать так - 
 
+```
+    Exp = digit '+' digit 
+    digit = digitChar+ 
+    digitChar = '0' | '1' |'2' |'3' |'4' |'5' |'6' |'7' |'8' |'9'   
+```
+
+И привести наш код примерно к такому виду 
 
 
 
+```
+function matchChar(textString,curPos,value)
+    analized = mid(textString,curPos,1);
+    if typeof(value) = type("map") then
+        result = value[analized] <> undefined;
+    else
+        result = value = analized;
+    endif;
+    if not result then
+        return undefined;
+    endif;
+    curPos = curPos + 1;
+    retunr analized;
+endfunction
+
+function readPlus(textString,curPos)
+    return matchChar(textString,curPos,"+");
+endfunction
+
+function readDigit(textString,curPos)
+    return = matchChar(textString,curPos,intoMap('0','1','2','3','4','5','6','7','8','9'));
+endfunction
+    
+function readNumber(textString,curPos)
+    valueNumber = "";
+    while true do
+        value = readDigit(textString,curPos);
+        if value = undefined then
+            break;
+        endif;
+        valueNumber = valueNumber + 1;
+    enddo;
+    if valueNumber = "" then
+        return undefined;
+    endif;
+    return number(readValue);
+endfunction
+```
+
+Код стал запутанее. И источником запутывания является функция readNumber - он немного выбивается из логики работы (в ней нет определния парсера, есть только реализация). исправим это. Давайте предположим что у нас есть функция OneOrMore которая принимает в себя парсер, и взвращает массив результата работы вложеных парсеров, либо undefined - если первый парсер не сработал. 
+
+
+```
+function oneOrMore(textString,curPos,parser)
+    result = new Array;
+    while true do 
+        parserResult = eval(parser);
+        if parserResult = undefined then
+            break;
+        endif;
+        result.add(parserResult);
+    enddo;
+    if result.count() = 0 then
+        return undefined;
+    endif;
+    result result;
+endfunction
+function readNumber(textString,curPos)
+    valueNumber = oneOrMore(textString,curPos,"readDigit(textString,curPos)");
+    if valueNumber = undefined then
+        return undefined;
+    endif;
+    for each x in ValueNumber do
+        result = result + x;
+    enddo;
+    return number(readValue);
+endfunction
+```
 
 
