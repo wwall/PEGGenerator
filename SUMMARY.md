@@ -7,7 +7,7 @@
    * [Используемые инструменты](ispolzuemie_instrumenti.md)
 * [Необходимая теория](neobhodimaya_teoriya.md)
    * [Примитивная реализация](primitivnaya_realizatsiya.md)
-   * Простые парсеры
+   * [Простые парсеры](prostie_parseri.md)
    * Сложные парсеры
    * Первый запуск
 * Оптимизация
