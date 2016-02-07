@@ -49,7 +49,6 @@ endif;
 ```
 function readNumber(textString,curPos)
     valueNumber = "";
-    savePos = curPos;
     while true do
         value = mid(textString,curPos,1);
         if value < "0" or value > "9" then
@@ -59,10 +58,12 @@ function readNumber(textString,curPos)
         curPos = curPos + 1;
     enddo;
     if valueNumber = "" then
-        curPos = savePos;
         return undefined;
     endif;
     return number(readValue);
 endfunction
 ```
+Как видно из кода - в цикле аккумулируется строковое значение, до тех пор пока прочитанный символ - цифра. Возвращаемое значение завивит от прочитаного набор - если он пуст - то возвращаем undefiend, иначе - прочитаное число преобразованное к типу число.
 
+
+В принципе - парсер рабочий. 
