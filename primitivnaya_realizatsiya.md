@@ -46,3 +46,23 @@ endif;
 ```
 Как видно из кода - функция просто плучает символ по указаной позиции и анализирует его. Если это не символ '+' тогда возвращает undefined, иначе - увеличивает указатель позиции на 1 и возвращает прочитанный символ. 
 Реализция readNumber чуть сложнее
+```
+function readNumber(textString,curPos)
+    valueNumber = "";
+    savePos = curPos;
+    while true do
+        value = mid(textString,curPos,1);
+        if value < "0" or value > "9" then
+            break;
+        endif;
+        valueNumber = valueNumber + 1;
+        curPos = curPos + 1;
+    enddo;
+    if valueNumber = "" then
+        curPos = savePos;
+        return undefined;
+    endif;
+    return number(readValue);
+endfunction
+```
+
