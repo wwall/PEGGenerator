@@ -42,6 +42,14 @@ function test_parseChar()
     
 endfunction
 ```
+Функция ruleDef - это просто опредление нового ключа в структуре. Код простой 
+
+```
+function ruleDef(parserCollection,name,parser)
+    parserCollection.insert(name,parser);
+endfunction
+```
+Далее все возможные парсеры будут храниться именно в коллекции parserCollection.
 Простая реализация для определения парсера может выглядеть так
 
 ```
@@ -87,8 +95,8 @@ endfunction
 
 ```
 
-Теперь нам осталось только определить - откуда берется новая позиция. Так как cChar - терминальный парсер, то самое очевидное - заставить функцию getChar возвращать кроме прочитанного значения еще и новую позицию. Например так-
-
+Теперь нам осталось только определить - откуда берется новая позиция. Так как cChar - терминальный парсер, то самое очевидное - заставить функцию getChar возвращать кроме прочитанного значения еще и новую позицию. Саму строку разбора будем храниться в глобальной переменной textString (требование не обязательное, просто для того что бы не передавать строку как парасетр во все парсеры, т.е. для упрощения интерфейса ) 
+Например так-
 
 ```
 function getChar(where)
@@ -136,9 +144,7 @@ endfunction
 
 function parse(inputString,parserName,parserCollection)
     textString = inputString;
-    textLen = strLen(textString);
     return applyParser(new Structure("position",1),parserName,parserCollection);
-
 endfunction
 ```
 
