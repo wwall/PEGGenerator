@@ -113,8 +113,23 @@ function makeFailure(where)
     return new Structure("rest,type",where,0);
 endfunction
 
+function getRest()
+    if value.property("rest") then
+        return value.rest;
+    endif;
+    raise "No Rest in state";
+endfunction
+
+function getValue(value) export
+    if value.property("value") then
+        return value.value;
+    endif;
+    raise "No Value in state";
+endfunction
+
+
 function applyParser_cChar(where,parser)
-    value = getChar(where);
+    value = getChar(getRest(where));
     if value.value = parser.value then
         return makeSucces(value,getPosition(value))
     endif;
