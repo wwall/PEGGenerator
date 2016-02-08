@@ -95,7 +95,7 @@ endfunction
 
 ```
 
-Теперь нам осталось только определить - откуда берется новая позиция. Так как cChar - терминальный парсер, то самое очевидное - заставить функцию getChar возвращать кроме прочитанного значения еще и новую позицию. Саму строку разбора будем храниться в глобальной переменной textString (требование не обязательное, просто для того что бы не передавать строку как параметр во все парсеры, т.е. для упрощения интерфейса ) 
+Теперь нам осталось только определить - откуда берется новая позиция. Так как cChar - терминальный парсер, то самое очевидное - заставить функцию getChar возвращать кроме прочитанного значения еще и новое состояние. Саму строку разбора будем храниться в глобальной переменной textString (требование не обязательное, просто для того что бы не передавать строку как параметр во все парсеры, т.е. для упрощения интерфейса ) 
 Например так-
 
 ```
@@ -106,19 +106,19 @@ function getChar(where)
 endfunction
 
 function makeSuccses(value,where)
-    return new Structure("value,position,type",value,where,1);
+    return new Structure("value,rest,type",value,where,1);
 endfunction
 
 function makeFailure(where)
-    return new Structure("position,type",where,0);
+    return new Structure("rest,type",where,0);
 endfunction
 
 function applyParser_cChar(where,parser)
     value = getChar(where);
     if value.value = parser.value then
-        return makeSucces(value.value,value.position)
+        return makeSucces(value,getPosition(value))
     endif;
-    return makeFailure(where.position);
+    return makeFailure(where);
 endfunction
 
 ```
