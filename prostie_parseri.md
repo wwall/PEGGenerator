@@ -148,4 +148,6 @@ function parse(inputString,parserName,parserCollection)
 endfunction
 ```
 
+Вот собственно и все - наш тест отработал.
+
 
