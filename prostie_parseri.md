@@ -42,6 +42,7 @@ function test_parseChar()
     
 endfunction
 ```
+
 Функция ruleDef - это просто определение нового ключа в структуре. Код простой 
 
 ```

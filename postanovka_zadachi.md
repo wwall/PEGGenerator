@@ -6,7 +6,12 @@
 
 ```
     Exp = digit '+' digit {$$ = $1 + $2}
-    digit = digitChar+ {res = ""; for each x in $1 do res = res + x; enddo; $$ = number(res);}
+    digit = digitChar+ {
+	res = ""; 
+	for each x in $1 do 
+		res = res + x; 
+	enddo; 
+	$$ = number(res);}
     digitChar = [0-9] {$$ = $1.value}
 ```
 
