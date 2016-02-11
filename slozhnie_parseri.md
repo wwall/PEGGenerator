@@ -1,14 +1,15 @@
 # Сложные парсеры
 В этой главе мы реализуем следующие парсеры 
-    seq - парсер собирающий несколько парсеров в один
-    alt - парсер альтернатив
-    zerroOrMore - парсер разбирающий ноль или больше вхождения парсеров
-    zerroOrOne - парсер разбирающий ноль или одно вхождение парсеров
-    oneOrMore - парсер разбирающий один или больше вхождения парсеров
-    fn - парсер, выполняющий код в случае если зависимый парсер успешно отработал
+* seq - парсер собирающий несколько парсеров в один
+* alt - парсер альтернатив
+* zerroOrMore - парсер разбирающий ноль или больше вхождения парсеров
+* zerroOrOne - парсер разбирающий ноль или одно вхождение парсеров
+* oneOrMore - парсер разбирающий один или больше вхождения парсеров
+* fn - парсер, выполняющий код в случае если зависимый парсер успешно отработал
 
 
-Seq
+#Seq
+
 Оператор seq это функция обрабатывающая результаты подчинненых парсеров
 Пример вызова 
 ```
@@ -40,7 +41,9 @@ Seq
 	wrkValue = where;
 	result = new Array;
 ```
-Подгатавливаем служебные переменные - wrkValue это состояние для работы парсера, result - массив результатов. 
+Подгатавливаем служебные переменные - 
+* wrkValue это состояние для работы парсера, 
+* result - массив результатов. 
 
 ```
 	for each parser in fparser.parser do	
@@ -63,6 +66,51 @@ Seq
 ```
 А если применение парсера прошло успешно - сохраняем в массиве результат и меняем состояние потока.
 Когда все парсеры успешно отработали - вернем результат успешного применения оператора seq
+
+
+Осталось сделать опеределение для вызова. И тут возникает сложность между способом хранения парсеров (массив) и способом передачи. Разделим функцию seq на 2 функции с разныем набором формальных параметров.
+
+```
+
+
+function wrap(x)
+    return ?(typeof(x)=type("String"),ref(x),x);
+endfunction
+
+procedure Add2Array(x,array)
+    if x <> undefined then
+        Array.Add(wrap(x));
+    Endif
+endprocedure
+
+function toArray(a1=undefined,a2=undefined,a3=undefined,a4=undefined,a5=undefined,a6=undefined,a7=undefined,a8=undefined,a9=undefined,a0=undefined)
+    Array = new Array;
+    Add2Array(a1,Array);
+    Add2Array(a2,Array);
+    Add2Array(a3,Array);
+    Add2Array(a4,Array);
+    Add2Array(a5,Array);
+    Add2Array(a6,Array);
+    Add2Array(a7,Array);
+    Add2Array(a8,Array);
+    Add2Array(a9,Array);
+    Add2Array(a0,Array);
+    return Array;
+endfunction
+
+function seq(a1,a2,a3=undefined,a4=undefined,a5=undefined,a6=undefined,a7=undefined,a8=undefined,a9=undefined,a0=undefined)
+    return new Structure("type,parsers","seq",toArray(a1,a2,a3,a4,a5,a6,a7,a8,a9,a0));
+endfunction
+
+
+function _seq(Array)
+    return new Structure("type,parsers","seq",Array);
+endfunction
+
+
+```
+
+Как видно из кода - каждый параметр передаваемый в функцию seq проходит проверку в функции wrap. Эта проверка нужна толь для того что бы обеспечить единообразие в хранении парсеров для функции applyParser.  
 
 
 
