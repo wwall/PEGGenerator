@@ -7,7 +7,6 @@
 * oneOrMore - парсер разбирающий один или больше вхождения парсеров
 * fn - парсер, выполняющий код в случае если зависимый парсер успешно отработал
 
-
 #Seq
 
 Оператор seq это функция обрабатывающая результаты подчинненых парсеров
@@ -20,7 +19,7 @@
 
 Рассмотрим подробнее определение оператора seq
 ```
-	function seq(where,fparser,ParserCollection)
+	function applyParser_seq(where,fparser,ParserCollection)
 		wrkValue = where;
 		result = new Array;
 		for each parser in fparser.parser do
@@ -112,13 +111,53 @@ endfunction
 
 Как видно из кода - каждый параметр передаваемый в функцию seq проходит проверку в функции wrap. Эта проверка нужна толь для того что бы обеспечить единообразие в хранении парсеров для функции applyParser.  
 
+Тест отрабатывает успешно, можем переходить к реализации следующего оператора
 
 
-Парсер alt
+#Alt
+
+Оператор Alt выполняет функцию выбора. Он возвращает первый успешно отработавший парсер.
+Традиционно - тест 
+```
+function testParser_seq() export
+    parser = new Structure;
+    RuleDef(parser,"testAlt",alt(ichar("a"),ichar("B")));
+    value = "bA";
+    result = runParser(value,"testAlt",parser);
+    wait = makeSuccess(new Structure("value,position","b",new Structure("position,line,column",2,1,2)), (new Structure("position,line,column",2,1,2)));
+    Ожидаем.Что(result).Равно(wait);
+endfunction
+```
+
+Грамматика которую разбирает этот тест
+
+```
+	testAlt = "а"|"B"
+```
+
+
+Код оператора ниже
+
+```
+function applyParser_alt(where,fparser,parser) export
+    for each wrkParser in fparser.parsers do
+        wrkData  = ApplyParser(where,wrkParser,parser);
+        if isSuccess(wrkData) then
+            return wrkData;
+        endif;
+    enddo;
+    return makeFailure(where);
+endfunction
+
+```
+
+Как видно - ничего волшебного не происходит - оператор бежит по списку подчиненных парсеров, и возвращает результат работы парсера который успешно сработал
+
+
+
 
 Парсер fn
 
-Парсер seq
 
 Парсер *
 
