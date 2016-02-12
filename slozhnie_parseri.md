@@ -152,18 +152,31 @@ endfunction
 ```
 
 Как видно - ничего волшебного не происходит - оператор бежит по списку подчиненных парсеров, и возвращает результат работы парсера который успешно сработал
+Остается только описать конструктор для этого оператора. Он простой - 
+
+```
+function alt(a1,a2,a3=undefined,a4=undefined,a5=undefined,a6=undefined,a7=undefined,a8=undefined,a9=undefined,a0=undefined)
+    return new Structure("type,parsers","alt",toArray(a1,a2,a3,a4,a5,a6,a7,a8,a9,a0));
+endfunction
+
+function _alt(Array)
+    return new Structure("type,parsers","alt",Array);
+endfunction
+
+```
+
+Запускаем тесты и убеждаемся что все работает. 
 
 
+# Парсер zerroOrMore *
 
-
-Парсер fn
-
-
-Парсер *
 
 Парсер ?
 
 Парсер +
+
+
+Парсер fn
 
 **Парсеры просмотра**
 
