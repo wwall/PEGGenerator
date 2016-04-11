@@ -12,12 +12,28 @@
 Оператор seq это функция обрабатывающая результаты подчинненых парсеров
 Пример вызова 
 ```
-	ruleDef(paser,"Exp",seq("digit",cchar("+"),"digit"));
+	ruleDef(paser,"Exp",seq(ichar("a"),ichar("B")));
 ```
 
-Эта строка описывает создание парсера который последовательно вызывает парсер с именем digit, парсер символа "+" и снова парсер "digit".
+Эта строка описывает создание парсера который последовательно вызывает парсер символа "а" без учета регистра, а затем парсер символа "В" без учета регистра.
 
-Рассмотрим подробнее определение оператора seq
+Тест для этого парсера выглядит так - 
+```
+function testParser_seq() export
+	
+	parser = new Structure;
+	RuleDef(parser,"Start",seq(ichar("a"),ichar("B")));
+	result = runParser("Ab","Start",parser);
+	resultArray = new array;
+	resultArray.Add(new Structure("value,position","A",new Structure("position,line,column",2,1,2)));
+	resultArray.Add(new Structure("value,position","b",new Structure("position,line,column",3,1,3)));
+	wait = makeSuccess(resultArray, (new Structure("position,line,column",3,1,3)));
+	assert.What(result).Equal(wait);
+endfunction
+```
+Как видно - парсер seq должен возвращать массив, где содержится результат работы парсеров
+
+Вот один из возможных вариантов функции applyParser_seq
 ```
 	function applyParser_seq(where,fparser,ParserCollection)
 		wrkValue = where;
@@ -47,7 +63,7 @@
 ```
 	for each parser in fparser.parser do	
 ```
-Тут просто - начало цикла который проходит по коллекции 
+Тут просто - начало цикла который проходит по коллекции парсеров которые должны вернуть успех при разборе
 
 ```
 	value = applyParser(wrkWalue,parser,parserCollection);
@@ -109,7 +125,7 @@ endfunction
 
 ```
 
-Как видно из кода - каждый параметр передаваемый в функцию seq проходит проверку в функции wrap. Эта проверка нужна толь для того что бы обеспечить единообразие в хранении парсеров для функции applyParser.  
+Заметьте - каждый параметр передаваемый в функцию seq проходит проверку в функции wrap. Эта проверка нужна только для того что бы обеспечить единообразие в хранении парсеров для функции applyParser, больше никакой полезной нагрузки он не несет.
 
 Тест отрабатывает успешно, можем переходить к реализации следующего оператора
 
@@ -117,41 +133,39 @@ endfunction
 #Alt
 
 Оператор Alt выполняет функцию выбора. Он возвращает первый успешно отработавший парсер.
-Традиционно - тест 
+Традиционно - тест который описывает граматику 
 ```
-function testParser_seq() export
-    parser = new Structure;
-    RuleDef(parser,"testAlt",alt(ichar("a"),ichar("B")));
-    value = "bA";
-    result = runParser(value,"testAlt",parser);
-    wait = makeSuccess(new Structure("value,position","b",new Structure("position,line,column",2,1,2)), (new Structure("position,line,column",2,1,2)));
-    Ожидаем.Что(result).Равно(wait);
+	testAlt = "a" | "B"
+```
+т.е. символ либо а либо b без учета регистра. Строка подаваемая на вход - "bA" и должен успешно быть разобран первый символ.
+```
+function testParser_alt() export
+	parser = new Structure;
+	RuleDef(parser,"testAlt",alt(ichar("a"),ichar("B")));
+	value = "bA";
+	result = runParser(value,"testAlt",parser);
+	resultArray = new Structure("value,position","b",new Structure("position,line,column",2,1,2));
+	wait = makeSuccess(resultArray, (new Structure("position,line,column",2,1,2)));
+	assert.What(result).Equal(wait);
 endfunction
 ```
-
-Грамматика которую разбирает этот тест
-
-```
-	testAlt = "а"|"B"
-```
-
 
 Код оператора ниже
 
 ```
 function applyParser_alt(where,fparser,parser) export
-    for each wrkParser in fparser.parsers do
-        wrkData  = ApplyParser(where,wrkParser,parser);
-        if isSuccess(wrkData) then
-            return wrkData;
-        endif;
-    enddo;
-    return makeFailure(where);
+	result = new Array;
+	for each wrkParser in fparser.parsers do
+		wrkData  = ApplyParser(where,wrkParser,parser);
+		if isSuccess(wrkData) then
+			return wrkData;
+		endif;
+	enddo;
+	return makeFailure(where);
 endfunction
-
 ```
 
-Как видно - ничего волшебного не происходит - оператор бежит по списку подчиненных парсеров, и возвращает результат работы парсера который успешно сработал
+Как видно - ничего волшебного не происходит - оператор бежит по списку подчиненных парсеров, и возвращает результат работы первого парсера который успешно сработал.
 Остается только описать конструктор для этого оператора. Он простой - 
 
 ```
@@ -170,16 +184,53 @@ endfunction
 
 # Парсер zerroOrMore *
 
-
 Парсер ?
 
-Парсер +
+Оператор ? необходим для ситуации когда появление парсера - опционально. Например грамматика
 
+```
+	testQuest = "а" "B"?
+```
+успешно обработает и строку "аВ" и "а"
 
-Парсер fn
+Традиционно - тест. Точнее 2 теста - один для сутации когда находящийся под оператором ? парсер сработал, второй - когда нет.
 
-**Парсеры просмотра**
+```
+function testParser_one_or_zerro_0() export
+	parser = new Structure;
+	RuleDef(parser,"start",zerroOrOne(ichar("a"),-1));
+	value = "abA";
+	result = runParser(value,"start",parser);
+	pos= new Structure("position,line,column",2,1,2);
+	wait = makeSuccess(new Structure("value,position","a",pos),(pos));
+	assert.What(result).Equal(wait);
+endfunction
 
-Парсер предпросмотра с инверсией
+function testParser_one_or_zerro_1() export
+	parser = new Structure;
+	RuleDef(parser,"start",zerroOrOne(ichar("a"),-1));
+	value = "2abA";
+	result = runParser(value,"start",parser);
+	pos= new Structure("position,line,column",1,1,1);
+	wait = makeSuccess(-1,(pos));
+	assert.What(result).Equal(wait);
+endfunction
+```
 
-Парсер предпросмотра
+Обратите внимание на вызов zerroOrOne - вторым паарметром передается значение которое будет возвращено если персер - не сработал.
+Код парсера 
+
+```
+function applyParser_oneOrZerro(where,fparser,parser) export
+	fParserRef = fparser.parserRef;
+	wrkData  = ApplyParser(where,fParserRef,parser);
+	if isSuccess(wrkData) then
+		return wrkData;
+	endif;
+	return makeSuccess(fparser.default,getRest(wrkData));
+endfunction
+
+```
+
+Как вы уже поняли на этих трех примерах - писать операторы не сложно. Оставщиеся операторы - остаются для самостоятельной разработки, или (если спешите) можете посмотреть в code\CollectionParser.epf
+
