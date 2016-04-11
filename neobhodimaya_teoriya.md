@@ -619,3 +619,38 @@ endfunction
 
 Как вы уже поняли на этих трех примерах - писать операторы не сложно. Оставщиеся операторы - остаются для самостоятельной разработки, или (если спешите) можете посмотреть в code\CollectionParser.epf
 
+### Где мы сейчас? 
+Вспомним первончальную постановку задачи 
+Нам дана граматика 
+```
+    Exp = digit '+' digit {$$ = $1 + $2}
+    digit = digitChar+ {
+	res = ""; 
+	for each x in $1 do 
+		res = res + x; 
+	enddo; 
+	$$ = number(res);}
+    digitChar = [0-9] {$$ = $1.value}
+```
+
+Если сейчас мы перепишем ее в таком виде - 
+
+function testParser_Сложение() export
+	
+	parser = new Structure;
+	RuleDef(parser,"Exp",fn(seq("digit",cChar("+"),"digit"),"$$ = $1 + $3"));
+	RuleDef(parser,"digit",fn(seq(oneOrMore("digitChar")),"res = """"; 
+	|for each x in $1 do 
+	|	res = res + x; 
+	|enddo; 
+	|$$ = number(res);"));
+	
+	RuleDef(parser,"digitChar",fn(range("0","9"),"$$ = $$.value;"));
+	
+	result = runParser("1+2","Exp",parser);
+	wait = 3;
+	assert.What(result.value).Equal(wait);
+	
+endfunction
+
+то задача будет решена. Но пользоваться такой записью - очень неудобно. В связи с чем переходим ко вторй части - реализация языка описания парсеров и его тестирвоание.
