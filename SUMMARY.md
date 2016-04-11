@@ -2,7 +2,6 @@
 
 * [Introduction](README.md)
 * [Введение](vvedenie.md)
-   * [Используемые инструменты](ispolzuemie_instrumenti.md)
 * [Необходимая теория](neobhodimaya_teoriya.md)
    * [Примитивная реализация](primitivnaya_realizatsiya.md)
    * [Простые парсеры](prostie_parseri.md)
