@@ -633,10 +633,10 @@ endfunction
     digitChar = [0-9] {$$ = $1.value}
 ```
 
-Если сейчас мы перепишем ее в таком виде - 
+Если сейчас мы перепишем ее в таком виде  
+
 ```
 function testParser_Сложение() export
-	
 	parser = new Structure;
 	RuleDef(parser,"Exp",fn(seq("digit",cChar("+"),"digit"),"$$ = $1 + $3"));
 	RuleDef(parser,"digit",fn(seq(oneOrMore("digitChar")),"res = """"; 
