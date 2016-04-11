@@ -628,7 +628,8 @@ endfunction
 	for each x in $1 do 
 		res = res + x; 
 	enddo; 
-	$$ = number(res);}
+	
+    $$ = number(res);}
     digitChar = [0-9] {$$ = $1.value}
 ```
 
