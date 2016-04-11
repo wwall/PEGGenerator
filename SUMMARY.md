@@ -3,7 +3,6 @@
 * [Introduction](README.md)
 * [Введение](vvedenie.md)
 * [Необходимая теория](neobhodimaya_teoriya.md)
-   * [Сложные парсеры](slozhnie_parseri.md)
    * Первый запуск
 * Оптимизация
    * Мемоизация
