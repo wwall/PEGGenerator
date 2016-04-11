@@ -3,7 +3,7 @@
 * [Introduction](README.md)
 * [Введение](vvedenie.md)
 * [Необходимая теория](neobhodimaya_teoriya.md)
-   * Первый запуск
+   * [Первый запуск](pervii_zapusk.md)
 * Оптимизация
    * Мемоизация
 * Генерация
