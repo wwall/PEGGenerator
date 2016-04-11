@@ -634,7 +634,7 @@ endfunction
 ```
 
 Если сейчас мы перепишем ее в таком виде - 
-
+```
 function testParser_Сложение() export
 	
 	parser = new Structure;
@@ -652,5 +652,5 @@ function testParser_Сложение() export
 	assert.What(result.value).Equal(wait);
 	
 endfunction
-
+```
 то задача будет решена. Но пользоваться такой записью - очень неудобно. В связи с чем переходим ко вторй части - реализация языка описания парсеров и его тестирвоание.
